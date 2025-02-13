@@ -10,14 +10,17 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #ffccd5;
+            background-color: #000;
             flex-direction: column;
             text-align: center;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            overflow: hidden;
+            color: #00ff00;
         }
         .terminal {
             background-color: black;
-            color: green;
+            color: #00ff00;
             font-family: 'Courier New', monospace;
             padding: 20px;
             border-radius: 10px;
@@ -26,10 +29,38 @@
             text-align: left;
             white-space: pre-wrap;
             overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            position: relative;
+        }
+        .terminal::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent 50%, rgba(0, 255, 0, 0.1) 50%);
+            background-size: 100% 4px;
+            animation: scanline 5s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes scanline {
+            from { background-position: 0 0; }
+            to { background-position: 0 100%; }
         }
         .input-box {
             display: none;
             margin-top: 10px;
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 5px;
+            border: 2px solid #00ff00;
+            outline: none;
+            width: 60%;
+            text-align: center;
+            background-color: black;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
         }
         .heart {
             display: none;
@@ -39,6 +70,7 @@
             position: relative;
             transform: rotate(-45deg);
             animation: heartbeat 1.5s infinite;
+            margin-top: 20px;
         }
         .heart:before, .heart:after {
             content: "";
@@ -64,8 +96,46 @@
         .message {
             display: none;
             margin-top: 20px;
-            font-size: 1.5em;
-            color: #d10000;
+            font-size: 2em;
+            color: #ff4d6d;
+            text-shadow: 0 0 10px rgba(255, 77, 109, 0.8);
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .hearts-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .hearts-container span {
+            position: absolute;
+            color: #ff4d6d;
+            font-size: 2em;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+        .glitch {
+            position: relative;
+            animation: glitch 1s infinite;
+        }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
         }
     </style>
 </head>
@@ -73,18 +143,22 @@
     <div class="terminal" id="terminal"></div>
     <input type="text" class="input-box" id="inputBox" placeholder="Type your answer here...">
     <div class="heart" id="heart"></div>
-    <p class="message" id="message">I love you now and forever. You make my heart beat faster! ❤️</p>
-    
+    <p class="message" id="message">I love you now and forever. 💕 Happy Valentine's Day! 💋❤️</p>
+    <div class="hearts-container" id="heartsContainer"></div>
+
     <script>
         const terminal = document.getElementById("terminal");
         const inputBox = document.getElementById("inputBox");
         const heart = document.getElementById("heart");
         const message = document.getElementById("message");
+        const heartsContainer = document.getElementById("heartsContainer");
 
         let script = [
             "Initializing Valentine's Program...",
             "Loading love.exe... ❤️",
             "Processing feelings...",
+            "Analyzing compatibility...",
+            "Decrypting emotions...",
             "Generating question...",
             "Will you be my Valentine? (yes/no)"
         ];
@@ -92,7 +166,7 @@
         let i = 0;
         function typeScript() {
             if (i < script.length) {
-                terminal.innerHTML += script[i] + "\n";
+                terminal.innerHTML += `<span class="glitch">${script[i]}</span>\n`;
                 i++;
                 setTimeout(typeScript, 1000);
             } else {
@@ -111,12 +185,26 @@
                     setTimeout(() => {
                         heart.style.display = "block";
                         message.style.display = "block";
+                        startHearts();
                     }, 1000);
                 } else {
                     terminal.innerHTML += "\nInvalid response. Try again!";
                 }
             }
         });
+
+        function startHearts() {
+            setInterval(() => {
+                const heartEmoji = document.createElement("span");
+                heartEmoji.innerHTML = "❤️";
+                heartEmoji.style.left = Math.random() * 100 + "vw";
+                heartEmoji.style.animationDuration = Math.random() * 3 + 2 + "s";
+                heartsContainer.appendChild(heartEmoji);
+                setTimeout(() => {
+                    heartEmoji.remove();
+                }, 5000);
+            }, 300);
+        }
     </script>
 </body>
 </html>
